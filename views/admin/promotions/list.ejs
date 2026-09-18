@@ -1,0 +1,37 @@
+<%- include('../_head_open', { active }) %>
+
+<h1>Promotions</h1>
+<div class="admin-sub"><%= promos.length %> promotions</div>
+
+<div class="admin-toolbar">
+  <div></div>
+  <a class="btn btn-primary" href="/admin/promotions/new">+ New Promotion</a>
+</div>
+
+<table class="admin-table">
+  <thead>
+    <tr><th></th><th>Title (EN)</th><th>Price text</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% promos.forEach(function(p) { %>
+      <tr>
+        <td><% if (p.imageUrl) { %><img class="thumb" src="<%= p.imageUrl %>" alt=""><% } %></td>
+        <td><%= p.title.en %></td>
+        <td><%= p.priceText || '—' %></td>
+        <td><span class="badge badge-<%= p.status %>"><%= p.status === 'published' ? 'Published' : 'Hidden' %></span></td>
+        <td>
+          <div class="row-actions">
+            <form method="post" action="/admin/promotions/<%= p.id %>/toggle" style="display:inline;"><button class="btn-link" type="submit"><%= p.status === 'published' ? 'Hide' : 'Publish' %></button></form>
+            <a class="btn-link" href="/admin/promotions/<%= p.id %>/edit">Edit</a>
+            <form method="post" action="/admin/promotions/<%= p.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this promotion?');"><button class="btn-danger-link" type="submit">Delete</button></form>
+          </div>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!promos.length) { %>
+      <tr><td colspan="5" style="text-align:center;color:#8a8f9c;">No promotions yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../_foot_close') %>

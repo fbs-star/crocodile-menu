@@ -1,0 +1,52 @@
+<%- include('../_head_open', { active }) %>
+
+<h1><%= promo ? 'Edit Promotion' : 'New Promotion' %></h1>
+
+<div class="form-card" style="max-width:680px;">
+<form method="post" action="<%= promo ? ('/admin/promotions/' + promo.id + '/edit') : '/admin/promotions/new' %>" enctype="multipart/form-data">
+  <div class="section-title">Title</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>English <span class="code">(en)</span></label><input type="text" name="title_en" value="<%= promo ? promo.title.en : '' %>"></div>
+    <div class="form-row"><label>Thai <span class="code">(th)</span></label><input type="text" name="title_th" value="<%= promo ? promo.title.th : '' %>"></div>
+    <div class="form-row"><label>Russian <span class="code">(ru)</span></label><input type="text" name="title_ru" value="<%= promo ? promo.title.ru : '' %>"></div>
+    <div class="form-row"><label>Chinese <span class="code">(zh)</span></label><input type="text" name="title_zh" value="<%= promo ? promo.title.zh : '' %>"></div>
+    <div class="form-row"><label>Arabic <span class="code">(ar)</span></label><input type="text" name="title_ar" value="<%= promo ? promo.title.ar : '' %>"></div>
+  </div>
+
+  <div class="section-title">Subtitle</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>English <span class="code">(en)</span></label><input type="text" name="subtitle_en" value="<%= promo ? promo.subtitle.en : '' %>"></div>
+    <div class="form-row"><label>Thai <span class="code">(th)</span></label><input type="text" name="subtitle_th" value="<%= promo ? promo.subtitle.th : '' %>"></div>
+    <div class="form-row"><label>Russian <span class="code">(ru)</span></label><input type="text" name="subtitle_ru" value="<%= promo ? promo.subtitle.ru : '' %>"></div>
+    <div class="form-row"><label>Chinese <span class="code">(zh)</span></label><input type="text" name="subtitle_zh" value="<%= promo ? promo.subtitle.zh : '' %>"></div>
+    <div class="form-row"><label>Arabic <span class="code">(ar)</span></label><input type="text" name="subtitle_ar" value="<%= promo ? promo.subtitle.ar : '' %>"></div>
+  </div>
+
+  <div class="form-row">
+    <label>Price / offer text</label>
+    <input type="text" name="priceText" value="<%= promo ? promo.priceText : '' %>" placeholder="e.g. Starting from ฿999">
+  </div>
+
+  <div class="form-row">
+    <label>Photo</label>
+    <input type="file" name="imageFile" accept="image/*">
+    <div class="hint">or paste an image URL instead:</div>
+    <input type="text" name="imageUrl" value="<%= promo ? promo.imageUrl : '' %>" placeholder="https://...">
+  </div>
+
+  <div class="form-row">
+    <label>Status</label>
+    <select name="status">
+      <option value="published" <%= (promo && promo.status === 'published') ? 'selected' : '' %>>Published</option>
+      <option value="hidden" <%= (!promo || promo.status !== 'published') ? 'selected' : '' %>>Hidden</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-ghost" href="/admin/promotions">Cancel</a>
+  </div>
+</form>
+</div>
+
+<%- include('../_foot_close') %>
