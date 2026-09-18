@@ -34,6 +34,7 @@ table.admin-table tr:last-child td { border-bottom: none; }
 .badge { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
 .badge-food { background: #eaf3e8; color: #3a7d33; }
 .badge-drinks { background: #e8eef8; color: #2e5aa8; }
+.badge-wine { background: #f8e9e4; color: #a8422e; }
 .badge-published { background: #e6f6ec; color: #1f8a4c; }
 .badge-hidden { background: #f1f1f3; color: #71727a; }
 .row-actions { display: flex; gap: 10px; align-items: center; white-space: nowrap; }
