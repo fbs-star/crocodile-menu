@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.restaurantName %> — <%= group === 'drinks' ? ui.drinks : ui.food %></title>
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="menu-header">
+    <a class="back-btn" href="/?lang=<%= lang %>">←</a>
+    <div class="brand">
+      <% if (settings.parentProperty) { %><div class="small"><%= settings.parentProperty %></div><% } %>
+      <div class="big serif"><%= settings.restaurantName %></div>
+    </div>
+    <div class="lang-switch">
+      <% LANGS.forEach(function(l) { %>
+        <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= l.code %><%= selectedCat ? ('&cat=' + selectedCat.id) : '' %>"><%= l.label %></a>
+      <% }) %>
+    </div>
+  </div>
+
+  <div class="menu-body">
+    <div class="menu-sidebar">
+      <% if (!cats.length) { %>
+        <div class="empty-note" style="padding:20px;">No categories published yet.</div>
+      <% } %>
+      <% cats.forEach(function(c) { %>
+        <a class="<%= selectedCat && selectedCat.id === c.id ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= lang %>&cat=<%= c.id %>">
+          <%= t(c.name) %>
+        </a>
+      <% }) %>
+    </div>
+    <div class="menu-content">
+      <% if (selectedCat) { %>
+        <h1 class="serif"><%= t(selectedCat.name) %></h1>
+        <div class="divider"><div></div><div></div></div>
+      <% } %>
+
+      <% if (!selectedCat || !items.length) { %>
+        <div class="empty-note"><%= selectedCat ? 'No items published in this category yet.' : 'No menu items to show yet.' %></div>
+      <% } else { %>
+        <div class="item-grid">
+          <% items.forEach(function(it) { %>
+            <div class="item-card">
+              <div class="img">
+                <% if (it.imageUrl) { %><img src="<%= it.imageUrl %>" alt=""><% } else { %>&#127860;<% } %>
+              </div>
+              <div class="body">
+                <% if (it.tags && it.tags.length) { %>
+                  <div class="tags"><% it.tags.forEach(function(tag){ %><span class="tag"><%= tag %></span><% }) %></div>
+                <% } %>
+                <div class="name serif"><%= t(it.name) %></div>
+                <% if (t(it.desc)) { %><div class="desc"><%= t(it.desc) %></div><% } %>
+                <% if (it.price) { %><div class="price"><%= settings.currencySymbol %><%= it.price %></div><% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

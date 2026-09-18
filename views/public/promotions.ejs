@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.restaurantName %> — <%= ui.promo %></title>
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="menu-header">
+    <a class="back-btn" href="/?lang=<%= lang %>">←</a>
+    <div class="brand">
+      <% if (settings.parentProperty) { %><div class="small"><%= settings.parentProperty %></div><% } %>
+      <div class="big serif"><%= settings.restaurantName %></div>
+    </div>
+    <div class="lang-switch">
+      <% LANGS.forEach(function(l) { %>
+        <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/promotions?lang=<%= l.code %>"><%= l.label %></a>
+      <% }) %>
+    </div>
+  </div>
+
+  <% if (!promos.length) { %>
+    <div class="empty-note" style="padding:60px 0;">No promotions published yet.</div>
+  <% } else { %>
+    <div class="promo-grid">
+      <% promos.forEach(function(p) { %>
+        <div class="promo-card">
+          <div class="img"><% if (p.imageUrl) { %><img src="<%= p.imageUrl %>" alt=""><% } %></div>
+          <div class="body">
+            <div class="title serif"><%= t(p.title) %></div>
+            <% if (t(p.subtitle)) { %><div class="sub"><%= t(p.subtitle) %></div><% } %>
+            <% if (p.priceText) { %><div class="price"><%= p.priceText %></div><% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</body>
+</html>

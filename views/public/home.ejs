@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.restaurantName %></title>
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<div class="hero" style="<%= settings.heroImage ? `background-image:url('${settings.heroImage}');` : '' %>">
+  <div class="lang-switch">
+    <% LANGS.forEach(function(l) { %>
+      <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/?lang=<%= l.code %>"><%= l.label %></a>
+    <% }) %>
+  </div>
+
+  <% if (settings.parentProperty) { %>
+    <div style="font-size:12px;letter-spacing:3px;color:rgba(255,255,255,0.85);text-transform:uppercase;"><%= settings.parentProperty %></div>
+  <% } %>
+
+  <div class="hero-wordmark serif"><%= settings.logoText || settings.restaurantName %></div>
+  <div class="hero-sub">
+    <div class="line"></div>
+    <div class="label serif">Bar &amp; Grill</div>
+    <div class="line"></div>
+  </div>
+
+  <div class="hero-tagline"><%= settings.tagline %></div>
+
+  <div class="hero-buttons">
+    <a class="hero-btn" href="/menu/food?lang=<%= lang %>"><%= ui.food %></a>
+    <a class="hero-btn" href="/menu/drinks?lang=<%= lang %>"><%= ui.drinks %></a>
+    <a class="hero-btn primary" href="/promotions?lang=<%= lang %>"><%= ui.promo %></a>
+  </div>
+</div>
+</body>
+</html>
