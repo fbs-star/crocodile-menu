@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/menu/:group', (req, res) => {
-  const group = req.params.group === 'drinks' ? 'drinks' : 'food';
+  const group = ['drinks', 'wine'].includes(req.params.group) ? req.params.group : 'food';
   const data = db.load();
   const cats = sortedCats(data.categories, group).filter((c) => c.status === 'published');
   const selectedId = req.query.cat ? Number(req.query.cat) : cats.length ? cats[0].id : null;
@@ -135,8 +135,9 @@ app.get('/admin', requireAdmin, (req, res) => res.redirect('/admin/categories'))
 
 app.get('/admin/categories', requireAdmin, (req, res) => {
   const data = db.load();
+  const groupOrder = { food: 0, drinks: 1, wine: 2 };
   const cats = [...data.categories].sort((a, b) => {
-    if (a.group !== b.group) return a.group === 'food' ? -1 : 1;
+    if (a.group !== b.group) return (groupOrder[a.group] ?? 3) - (groupOrder[b.group] ?? 3);
     return (a.sortOrder || 0) - (b.sortOrder || 0);
   });
   const withCounts = cats.map((c) => ({
@@ -153,7 +154,7 @@ app.get('/admin/categories/new', requireAdmin, (req, res) => {
 app.post('/admin/categories/new', requireAdmin, (req, res) => {
   const data = db.load();
   const id = db.nextId(data, 'category');
-  const group = req.body.group === 'drinks' ? 'drinks' : 'food';
+  const group = ['drinks', 'wine'].includes(req.body.group) ? req.body.group : 'food';
   const maxOrder = Math.max(0, ...data.categories.filter((c) => c.group === group).map((c) => c.sortOrder || 0));
   data.categories.push({
     id,
@@ -183,7 +184,7 @@ app.post('/admin/categories/:id/edit', requireAdmin, (req, res) => {
   const data = db.load();
   const cat = data.categories.find((c) => c.id === Number(req.params.id));
   if (cat) {
-    cat.group = req.body.group === 'drinks' ? 'drinks' : 'food';
+    cat.group = ['drinks', 'wine'].includes(req.body.group) ? req.body.group : 'food';
     cat.name = {
       en: req.body.name_en || '',
       th: req.body.name_th || '',
@@ -464,7 +465,8 @@ app.post('/admin/import', requireAdmin, upload.single('csvFile'), (req, res) => 
     }
 
     rows.forEach((row) => {
-      const group = (row.group || 'food').toLowerCase() === 'drinks' ? 'drinks' : 'food';
+      const rowGroup = (row.group || 'food').toLowerCase();
+      const group = ['drinks', 'wine'].includes(rowGroup) ? rowGroup : 'food';
       const catNames = {
         en: row.category_en || '',
         th: row.category_th || '',
