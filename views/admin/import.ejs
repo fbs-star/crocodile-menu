@@ -1,0 +1,35 @@
+<%- include('./_head_open', { active }) %>
+
+<h1>Import Menu</h1>
+<div class="admin-sub">Bulk-add categories and items from a CSV file (e.g. exported from a spreadsheet).</div>
+
+<% if (result) { %>
+  <div class="alert-success">Read <%= result.rows %> rows — created <%= result.createdCats %> new categories and <%= result.createdItems %> new items.</div>
+<% } %>
+<% if (error) { %>
+  <div class="alert-error"><%= error %></div>
+<% } %>
+
+<div class="form-card">
+  <div class="section-title">Expected columns</div>
+  <p style="font-size:13px;color:#4b5160;line-height:1.6;">
+    <code class="small">group</code> (food or drinks),
+    <code class="small">category_en</code>, <code class="small">category_th</code>, <code class="small">category_ru</code>, <code class="small">category_zh</code>, <code class="small">category_ar</code>,
+    <code class="small">item_en</code>, <code class="small">item_th</code>, <code class="small">item_ru</code>, <code class="small">item_zh</code>, <code class="small">item_ar</code>,
+    <code class="small">desc_en</code>, <code class="small">desc_th</code>, <code class="small">desc_ru</code>, <code class="small">desc_zh</code>, <code class="small">desc_ar</code>,
+    <code class="small">price</code>, <code class="small">tags</code> (comma-separated).
+  </p>
+  <p style="font-size:13px;color:#8a8f9c;">One row per menu item. If a category name already exists in that group, items are added to it instead of duplicating it. Imported items and categories are published automatically.</p>
+
+  <form method="post" action="/admin/import" enctype="multipart/form-data" style="margin-top:18px;">
+    <div class="form-row">
+      <label>CSV file</label>
+      <input type="file" name="csvFile" accept=".csv,text/csv" required>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">Import</button>
+    </div>
+  </form>
+</div>
+
+<%- include('./_foot_close') %>

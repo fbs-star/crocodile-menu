@@ -1,0 +1,44 @@
+<%- include('./_head_open', { active }) %>
+
+<h1>Home Screen</h1>
+<div class="admin-sub">Controls the public landing page — restaurant name, tagline, and hero photo.</div>
+
+<% if (saved) { %><div class="alert-success">Saved.</div><% } %>
+
+<div class="form-card">
+<form method="post" action="/admin/home" enctype="multipart/form-data">
+  <div class="form-row">
+    <label>Restaurant name</label>
+    <input type="text" name="restaurantName" value="<%= settings.restaurantName %>">
+  </div>
+  <div class="form-row">
+    <label>Wordmark on hero <span class="code">(large logo text)</span></label>
+    <input type="text" name="logoText" value="<%= settings.logoText %>">
+  </div>
+  <div class="form-row">
+    <label>Parent property <span class="code">(shown above the name, optional)</span></label>
+    <input type="text" name="parentProperty" value="<%= settings.parentProperty %>" placeholder="e.g. Thavorn Beach Village">
+  </div>
+  <div class="form-row">
+    <label>Tagline</label>
+    <textarea name="tagline"><%= settings.tagline %></textarea>
+  </div>
+  <div class="form-row">
+    <label>Currency symbol</label>
+    <input type="text" name="currencySymbol" value="<%= settings.currencySymbol %>" style="max-width:80px;">
+  </div>
+  <div class="form-row">
+    <label>Hero background photo</label>
+    <input type="file" name="heroImageFile" accept="image/*">
+    <div class="hint">or paste an image URL instead:</div>
+    <input type="text" name="heroImageUrl" value="<%= settings.heroImage %>" placeholder="https://...">
+    <% if (settings.heroImage) { %><div class="hint">Current: <code class="small"><%= settings.heroImage %></code></div><% } %>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save</button>
+  </div>
+</form>
+</div>
+
+<%- include('./_foot_close') %>

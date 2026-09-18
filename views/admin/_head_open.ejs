@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu Admin — Crocodile Bar &amp; Grill</title>
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <div class="admin-sidebar">
+    <div class="brand">
+      <div class="name">Crocodile Menu</div>
+      <div class="sub">Admin panel</div>
+    </div>
+    <nav>
+      <a class="<%= active === 'categories' ? 'active' : '' %>" href="/admin/categories">📂 Categories</a>
+      <a class="<%= active === 'items' ? 'active' : '' %>" href="/admin/items">🍽 Menu Items</a>
+      <a class="<%= active === 'promotions' ? 'active' : '' %>" href="/admin/promotions">🎉 Promotions</a>
+      <a class="<%= active === 'home' ? 'active' : '' %>" href="/admin/home">🏠 Home Screen</a>
+      <a class="<%= active === 'import' ? 'active' : '' %>" href="/admin/import">⬆️ Import Menu</a>
+    </nav>
+    <div class="foot">
+      Signed in as admin
+      <form method="post" action="/admin/logout"><button type="submit">Log out</button></form>
+    </div>
+  </div>
+  <div class="admin-main">
