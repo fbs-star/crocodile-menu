@@ -1,7 +1,7 @@
 <%- include('../_head_open', { active }) %>
 
 <h1><%= cat ? 'Edit Category' : 'New Category' %></h1>
-<div class="admin-sub">Categories group menu items under a heading in Food Menu or Drinks Menu.</div>
+<div class="admin-sub">Categories group menu items under a heading in Food Menu, Drinks Menu, or Wine Menu.</div>
 
 <div class="form-card">
 <form method="post" action="<%= cat ? ('/admin/categories/' + cat.id + '/edit') : '/admin/categories/new' %>">
@@ -10,6 +10,7 @@
     <select name="group">
       <option value="food" <%= (!cat || cat.group === 'food') ? 'selected' : '' %>>Food</option>
       <option value="drinks" <%= (cat && cat.group === 'drinks') ? 'selected' : '' %>>Drinks</option>
+      <option value="wine" <%= (cat && cat.group === 'wine') ? 'selected' : '' %>>Wine</option>
     </select>
   </div>
 
