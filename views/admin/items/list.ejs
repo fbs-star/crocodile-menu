@@ -1,0 +1,45 @@
+<%- include('../_head_open', { active }) %>
+
+<h1>Menu Items</h1>
+<div class="admin-sub"><%= items.length %> items<%= catFilter ? ' in this category' : '' %></div>
+
+<div class="admin-toolbar">
+  <form method="get" action="/admin/items">
+    <select class="filter-select" name="category" onchange="this.form.submit()">
+      <option value="">All categories</option>
+      <% categories.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= catFilter === c.id ? 'selected' : '' %>><%= c.group === 'drinks' ? '🍸' : '🍽' %> <%= c.name.en %></option>
+      <% }) %>
+    </select>
+  </form>
+  <a class="btn btn-primary" href="/admin/items/new">+ New Item</a>
+</div>
+
+<table class="admin-table">
+  <thead>
+    <tr><th></th><th>Name (EN)</th><th>Category</th><th>Price</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% items.forEach(function(it) { %>
+      <tr>
+        <td><% if (it.imageUrl) { %><img class="thumb" src="<%= it.imageUrl %>" alt=""><% } %></td>
+        <td><%= it.name.en %></td>
+        <td><%= it.cat ? it.cat.name.en : '—' %></td>
+        <td><%= it.price ? ('฿' + it.price) : '—' %></td>
+        <td><span class="badge badge-<%= it.status %>"><%= it.status === 'published' ? 'Published' : 'Hidden' %></span></td>
+        <td>
+          <div class="row-actions">
+            <form method="post" action="/admin/items/<%= it.id %>/toggle" style="display:inline;"><button class="btn-link" type="submit"><%= it.status === 'published' ? 'Hide' : 'Publish' %></button></form>
+            <a class="btn-link" href="/admin/items/<%= it.id %>/edit">Edit</a>
+            <form method="post" action="/admin/items/<%= it.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this item?');"><button class="btn-danger-link" type="submit">Delete</button></form>
+          </div>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!items.length) { %>
+      <tr><td colspan="6" style="text-align:center;color:#8a8f9c;">No menu items yet — add one, or use Import Menu to bulk-add from a spreadsheet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../_foot_close') %>

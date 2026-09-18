@@ -1,0 +1,64 @@
+<%- include('../_head_open', { active }) %>
+
+<h1><%= item ? 'Edit Menu Item' : 'New Menu Item' %></h1>
+
+<div class="form-card" style="max-width:720px;">
+<form method="post" action="<%= item ? ('/admin/items/' + item.id + '/edit') : '/admin/items/new' %>" enctype="multipart/form-data">
+  <div class="form-row">
+    <label>Category</label>
+    <select name="categoryId" required>
+      <% categories.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= (item && item.categoryId === c.id) ? 'selected' : '' %>>
+          <%= c.group === 'drinks' ? 'Drinks' : 'Food' %> — <%= c.name.en %>
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="section-title">Name</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>English <span class="code">(en)</span></label><input type="text" name="name_en" value="<%= item ? item.name.en : '' %>"></div>
+    <div class="form-row"><label>Thai <span class="code">(th)</span></label><input type="text" name="name_th" value="<%= item ? item.name.th : '' %>"></div>
+    <div class="form-row"><label>Russian <span class="code">(ru)</span></label><input type="text" name="name_ru" value="<%= item ? item.name.ru : '' %>"></div>
+    <div class="form-row"><label>Chinese <span class="code">(zh)</span></label><input type="text" name="name_zh" value="<%= item ? item.name.zh : '' %>"></div>
+    <div class="form-row"><label>Arabic <span class="code">(ar)</span></label><input type="text" name="name_ar" value="<%= item ? item.name.ar : '' %>"></div>
+  </div>
+
+  <div class="section-title">Description</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>English <span class="code">(en)</span></label><textarea name="desc_en"><%= item ? item.desc.en : '' %></textarea></div>
+    <div class="form-row"><label>Thai <span class="code">(th)</span></label><textarea name="desc_th"><%= item ? item.desc.th : '' %></textarea></div>
+    <div class="form-row"><label>Russian <span class="code">(ru)</span></label><textarea name="desc_ru"><%= item ? item.desc.ru : '' %></textarea></div>
+    <div class="form-row"><label>Chinese <span class="code">(zh)</span></label><textarea name="desc_zh"><%= item ? item.desc.zh : '' %></textarea></div>
+    <div class="form-row"><label>Arabic <span class="code">(ar)</span></label><textarea name="desc_ar"><%= item ? item.desc.ar : '' %></textarea></div>
+  </div>
+
+  <div class="section-title">Details</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>Price (THB)</label><input type="text" name="price" value="<%= item ? item.price : '' %>" placeholder="e.g. 320"></div>
+    <div class="form-row"><label>Tags</label><input type="text" name="tags" value="<%= item && item.tags ? item.tags.join(', ') : '' %>" placeholder="e.g. Spicy, Chef's Special"></div>
+  </div>
+
+  <div class="form-row">
+    <label>Photo</label>
+    <input type="file" name="imageFile" accept="image/*">
+    <div class="hint">or paste an image URL instead:</div>
+    <input type="text" name="imageUrl" value="<%= item ? item.imageUrl : '' %>" placeholder="https://...">
+  </div>
+
+  <div class="form-row">
+    <label>Status</label>
+    <select name="status">
+      <option value="published" <%= (item && item.status === 'published') ? 'selected' : '' %>>Published</option>
+      <option value="hidden" <%= (!item || item.status !== 'published') ? 'selected' : '' %>>Hidden</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-ghost" href="/admin/items">Cancel</a>
+  </div>
+</form>
+</div>
+
+<%- include('../_foot_close') %>
