@@ -17,7 +17,7 @@
       <tr>
         <td><%= c.name.en %></td>
         <td><%= c.name.th %></td>
-        <td><span class="badge badge-<%= c.group %>"><%= c.group === 'drinks' ? 'Drinks' : 'Food' %></span></td>
+        <td><span class="badge badge-<%= c.group %>"><%= c.group === 'drinks' ? 'Drinks' : (c.group === 'wine' ? 'Wine' : 'Food') %></span></td>
         <td><%= c.itemCount %></td>
         <td><span class="badge badge-<%= c.status %>"><%= c.status === 'published' ? 'Published' : 'Hidden' %></span></td>
         <td>
