@@ -1,0 +1,41 @@
+<%- include('../_head_open', { active }) %>
+
+<h1><%= cat ? 'Edit Category' : 'New Category' %></h1>
+<div class="admin-sub">Categories group menu items under a heading in Food Menu or Drinks Menu.</div>
+
+<div class="form-card">
+<form method="post" action="<%= cat ? ('/admin/categories/' + cat.id + '/edit') : '/admin/categories/new' %>">
+  <div class="form-row">
+    <label>Group</label>
+    <select name="group">
+      <option value="food" <%= (!cat || cat.group === 'food') ? 'selected' : '' %>>Food</option>
+      <option value="drinks" <%= (cat && cat.group === 'drinks') ? 'selected' : '' %>>Drinks</option>
+    </select>
+  </div>
+
+  <div class="section-title">Name</div>
+  <div class="lang-grid">
+    <div class="form-row"><label>English <span class="code">(en)</span></label><input type="text" name="name_en" value="<%= cat ? cat.name.en : '' %>"></div>
+    <div class="form-row"><label>Thai <span class="code">(th)</span></label><input type="text" name="name_th" value="<%= cat ? cat.name.th : '' %>"></div>
+    <div class="form-row"><label>Russian <span class="code">(ru)</span></label><input type="text" name="name_ru" value="<%= cat ? cat.name.ru : '' %>"></div>
+    <div class="form-row"><label>Chinese <span class="code">(zh)</span></label><input type="text" name="name_zh" value="<%= cat ? cat.name.zh : '' %>"></div>
+    <div class="form-row"><label>Arabic <span class="code">(ar)</span></label><input type="text" name="name_ar" value="<%= cat ? cat.name.ar : '' %>"></div>
+  </div>
+
+  <div class="form-row">
+    <label>Status</label>
+    <select name="status">
+      <option value="published" <%= (cat && cat.status === 'published') ? 'selected' : '' %>>Published</option>
+      <option value="hidden" <%= (!cat || cat.status !== 'published') ? 'selected' : '' %>>Hidden</option>
+    </select>
+    <div class="hint">Hidden categories don't show on the public menu yet.</div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-ghost" href="/admin/categories">Cancel</a>
+  </div>
+</form>
+</div>
+
+<%- include('../_foot_close') %>

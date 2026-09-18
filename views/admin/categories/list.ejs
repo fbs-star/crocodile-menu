@@ -1,0 +1,40 @@
+<%- include('../_head_open', { active }) %>
+
+<h1>Categories</h1>
+<div class="admin-sub"><%= cats.length %> categories</div>
+
+<div class="admin-toolbar">
+  <div></div>
+  <a class="btn btn-primary" href="/admin/categories/new">+ New Category</a>
+</div>
+
+<table class="admin-table">
+  <thead>
+    <tr><th>Name (EN)</th><th>Name (TH)</th><th>Group</th><th>Items</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% cats.forEach(function(c) { %>
+      <tr>
+        <td><%= c.name.en %></td>
+        <td><%= c.name.th %></td>
+        <td><span class="badge badge-<%= c.group %>"><%= c.group === 'drinks' ? 'Drinks' : 'Food' %></span></td>
+        <td><%= c.itemCount %></td>
+        <td><span class="badge badge-<%= c.status %>"><%= c.status === 'published' ? 'Published' : 'Hidden' %></span></td>
+        <td>
+          <div class="row-actions">
+            <form method="post" action="/admin/categories/<%= c.id %>/move" style="display:inline;"><input type="hidden" name="dir" value="up"><button class="btn-link" type="submit">↑</button></form>
+            <form method="post" action="/admin/categories/<%= c.id %>/move" style="display:inline;"><input type="hidden" name="dir" value="down"><button class="btn-link" type="submit">↓</button></form>
+            <form method="post" action="/admin/categories/<%= c.id %>/toggle" style="display:inline;"><button class="btn-link" type="submit"><%= c.status === 'published' ? 'Hide' : 'Publish' %></button></form>
+            <a class="btn-link" href="/admin/categories/<%= c.id %>/edit">Edit</a>
+            <form method="post" action="/admin/categories/<%= c.id %>/delete" style="display:inline;" onsubmit="return confirm('Delete this category and all its items?');"><button class="btn-danger-link" type="submit">Delete</button></form>
+          </div>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!cats.length) { %>
+      <tr><td colspan="6" style="text-align:center;color:#8a8f9c;">No categories yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../_foot_close') %>
