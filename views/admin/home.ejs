@@ -34,6 +34,10 @@
     <input type="text" name="heroImageUrl" value="<%= settings.heroImage %>" placeholder="https://...">
     <% if (settings.heroImage) { %><div class="hint">Current: <code class="small"><%= settings.heroImage %></code></div><% } %>
   </div>
+  <div class="form-row">
+    <label><input type="checkbox" name="callStaffEnabled" value="1" <%= settings.callStaffEnabled ? 'checked' : '' %>> Show the "Call Staff" button on customer menu pages</label>
+    <div class="hint">When on, customers see a Call Staff button on the menu and promotions pages. Requests appear under Call Requests in the sidebar.</div>
+  </div>
 
   <div class="form-actions">
     <button class="btn btn-primary" type="submit">Save</button>
