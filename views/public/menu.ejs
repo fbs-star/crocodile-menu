@@ -13,10 +13,15 @@
       <% if (settings.parentProperty) { %><div class="small"><%= settings.parentProperty %></div><% } %>
       <div class="big serif"><%= settings.restaurantName %></div>
     </div>
-    <div class="lang-switch">
-      <% LANGS.forEach(function(l) { %>
-        <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= l.code %><%= selectedCat ? ('&cat=' + selectedCat.id) : '' %>"><%= l.label %></a>
-      <% }) %>
+    <div class="header-actions">
+      <% if (settings.callStaffEnabled) { %>
+        <button type="button" class="call-staff-btn" id="callStaffBtn" data-label="🔔 <%= ui.callStaff %>" data-sent="✓ <%= ui.callStaffSent %>">🔔 <%= ui.callStaff %></button>
+      <% } %>
+      <div class="lang-switch">
+        <% LANGS.forEach(function(l) { %>
+          <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= l.code %><%= selectedCat ? ('&cat=' + selectedCat.id) : '' %>"><%= l.label %></a>
+        <% }) %>
+      </div>
     </div>
   </div>
 
@@ -65,5 +70,29 @@
       <% } %>
     </div>
   </div>
+
+  <% if (settings.callStaffEnabled) { %>
+  <script>
+  (function () {
+    var btn = document.getElementById('callStaffBtn');
+    if (!btn) return;
+    var defaultLabel = btn.getAttribute('data-label');
+    var sentLabel = btn.getAttribute('data-sent');
+    var cooldownMs = 30000;
+    btn.addEventListener('click', function () {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.classList.add('sent');
+      btn.textContent = sentLabel;
+      fetch('/call', { method: 'POST' }).catch(function () {});
+      setTimeout(function () {
+        btn.disabled = false;
+        btn.classList.remove('sent');
+        btn.textContent = defaultLabel;
+      }, cooldownMs);
+    });
+  })();
+  </script>
+  <% } %>
 </body>
 </html>
