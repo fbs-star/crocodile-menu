@@ -478,19 +478,35 @@ app.get('/admin/home', requireAdmin, async (req, res) => {
   res.render('admin/home', { settings: data.settings, active: 'home', saved: req.query.saved });
 });
 
-app.post('/admin/home', requireAdmin, upload.single('heroImageFile'), async (req, res) => {
-  const data = await db.load();
-  data.settings.restaurantName = req.body.restaurantName || data.settings.restaurantName;
-  data.settings.parentProperty = req.body.parentProperty || '';
-  data.settings.tagline = req.body.tagline || '';
-  data.settings.currencySymbol = req.body.currencySymbol || data.settings.currencySymbol;
-  data.settings.logoText = req.body.logoText || data.settings.logoText;
-  data.settings.callStaffEnabled = !!req.body.callStaffEnabled;
-  if (req.file) data.settings.heroImage = `/uploads/${req.file.filename}`;
-  else if (req.body.heroImageUrl) data.settings.heroImage = req.body.heroImageUrl;
-  await db.save(data);
-  res.redirect('/admin/home?saved=1');
-});
+app.post(
+  '/admin/home',
+  requireAdmin,
+  upload.fields([
+    { name: 'heroImageFile', maxCount: 1 },
+    { name: 'logoImageFile', maxCount: 1 }
+  ]),
+  async (req, res) => {
+    const data = await db.load();
+    data.settings.restaurantName = req.body.restaurantName || data.settings.restaurantName;
+    data.settings.parentProperty = req.body.parentProperty || '';
+    data.settings.tagline = req.body.tagline || '';
+    data.settings.currencySymbol = req.body.currencySymbol || data.settings.currencySymbol;
+    data.settings.logoText = req.body.logoText || data.settings.logoText;
+    data.settings.callStaffEnabled = !!req.body.callStaffEnabled;
+
+    const heroFile = req.files && req.files.heroImageFile && req.files.heroImageFile[0];
+    if (heroFile) data.settings.heroImage = `/uploads/${heroFile.filename}`;
+    else if (req.body.heroImageUrl) data.settings.heroImage = req.body.heroImageUrl;
+
+    const logoFile = req.files && req.files.logoImageFile && req.files.logoImageFile[0];
+    if (req.body.removeLogoImage) data.settings.logoImage = '';
+    else if (logoFile) data.settings.logoImage = `/uploads/${logoFile.filename}`;
+    else if (req.body.logoImageUrl) data.settings.logoImage = req.body.logoImageUrl;
+
+    await db.save(data);
+    res.redirect('/admin/home?saved=1');
+  }
+);
 
 // =========================== ADMIN: IMPORT MENU (CSV) ===========================
 // Expected columns: group,category_en,category_th,category_ru,category_zh,category_ar,
