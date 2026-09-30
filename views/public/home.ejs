@@ -18,7 +18,11 @@
     <div class="hero-overline"><%= settings.parentProperty %></div>
   <% } %>
 
-  <div class="hero-wordmark serif"><%= settings.logoText || settings.restaurantName %></div>
+  <% if (settings.logoImage) { %>
+    <img class="hero-logo-img" src="<%= settings.logoImage %>" alt="<%= settings.restaurantName %>">
+  <% } else { %>
+    <div class="hero-wordmark serif"><%= settings.logoText || settings.restaurantName %></div>
+  <% } %>
   <div class="hero-sub">
     <div class="line"></div>
     <div class="label serif">Bar &amp; Grill</div>
