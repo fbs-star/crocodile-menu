@@ -16,6 +16,19 @@
     <input type="text" name="logoText" value="<%= settings.logoText %>">
   </div>
   <div class="form-row">
+    <label>Logo image <span class="code">(optional — replaces the wordmark text above with an image)</span></label>
+    <input type="file" name="logoImageFile" accept="image/*">
+    <div class="hint">or paste an image URL instead:</div>
+    <input type="text" name="logoImageUrl" value="<%= settings.logoImage %>" placeholder="https://...">
+    <% if (settings.logoImage) { %>
+      <div class="hint">Current:</div>
+      <div style="background:#8D4E40;padding:10px 16px;border-radius:6px;display:inline-block;">
+        <img src="<%= settings.logoImage %>" alt="Logo" style="max-height:44px;display:block;">
+      </div>
+      <label style="margin-top:8px;display:block;"><input type="checkbox" name="removeLogoImage" value="1"> Remove logo image (use the text wordmark instead)</label>
+    <% } %>
+  </div>
+  <div class="form-row">
     <label>Parent property <span class="code">(shown above the name, optional)</span></label>
     <input type="text" name="parentProperty" value="<%= settings.parentProperty %>" placeholder="e.g. Thavorn Beach Village">
   </div>
