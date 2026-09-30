@@ -17,6 +17,7 @@
       <a class="<%= active === 'categories' ? 'active' : '' %>" href="/admin/categories">📂 Categories</a>
       <a class="<%= active === 'items' ? 'active' : '' %>" href="/admin/items">🍽 Menu Items</a>
       <a class="<%= active === 'promotions' ? 'active' : '' %>" href="/admin/promotions">🎉 Promotions</a>
+      <a class="<%= active === 'calls' ? 'active' : '' %>" href="/admin/calls">🔔 Call Requests<% if (typeof pendingCallsCount !== 'undefined' && pendingCallsCount > 0) { %> <span style="display:inline-block;background:#e53935;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;margin-left:6px;"><%= pendingCallsCount %></span><% } %></a>
       <a class="<%= active === 'home' ? 'active' : '' %>" href="/admin/home">🏠 Home Screen</a>
       <a class="<%= active === 'import' ? 'active' : '' %>" href="/admin/import">⬆️ Import Menu</a>
     </nav>
