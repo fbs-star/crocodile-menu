@@ -32,6 +32,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
@@ -65,6 +66,21 @@ function requireAdmin(req, res, next) {
   if (req.session && req.session.isAdmin) return next();
   return res.redirect('/admin/login');
 }
+
+// Lets the admin sidebar show a "pending call" badge without threading a
+// count through every single admin route handler: EJS's include() inherits
+// the outer render's full locals, so setting res.locals here is enough for
+// _head_open.ejs to see it on every already-authenticated admin page.
+app.use('/admin', async (req, res, next) => {
+  if (!(req.session && req.session.isAdmin)) return next();
+  try {
+    const data = await db.load();
+    res.locals.pendingCallsCount = (data.callRequests || []).filter((c) => c.status === 'pending').length;
+  } catch (e) {
+    res.locals.pendingCallsCount = 0;
+  }
+  next();
+});
 
 function sortedCats(allCats, group) {
   return allCats
@@ -109,6 +125,27 @@ app.get('/promotions', async (req, res) => {
     .filter((p) => p.status === 'published')
     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
   res.render('public/promotions', { settings: data.settings, promos });
+});
+
+// Customer-facing "Call Staff" button. No auth — anyone viewing the public
+// menu can call this. Just records a pending request; the admin side polls
+// /admin/calls (and sees the sidebar badge) to notice it.
+app.post('/call', async (req, res) => {
+  try {
+    const data = await db.load();
+    data.callRequests = data.callRequests || [];
+    const id = db.nextId(data, 'callRequest');
+    data.callRequests.push({
+      id,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      resolvedAt: null
+    });
+    await db.save(data);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false });
+  }
 });
 
 // =========================== ADMIN: AUTH ===========================
@@ -413,6 +450,27 @@ app.post('/admin/promotions/:id/toggle', requireAdmin, async (req, res) => {
   res.redirect('/admin/promotions');
 });
 
+// =========================== ADMIN: CALL REQUESTS ===========================
+// "Call Staff" — customers tap a button on the public menu (POST /call above)
+// and it shows up here so front-of-house can see someone needs help.
+
+app.get('/admin/calls', requireAdmin, async (req, res) => {
+  const data = await db.load();
+  const calls = [...(data.callRequests || [])].sort((a, b) => b.id - a.id);
+  res.render('admin/calls/list', { calls, active: 'calls' });
+});
+
+app.post('/admin/calls/:id/resolve', requireAdmin, async (req, res) => {
+  const data = await db.load();
+  const call = (data.callRequests || []).find((c) => c.id === Number(req.params.id));
+  if (call) {
+    call.status = 'resolved';
+    call.resolvedAt = new Date().toISOString();
+    await db.save(data);
+  }
+  res.redirect('/admin/calls');
+});
+
 // =========================== ADMIN: HOME SCREEN ===========================
 
 app.get('/admin/home', requireAdmin, async (req, res) => {
@@ -427,6 +485,7 @@ app.post('/admin/home', requireAdmin, upload.single('heroImageFile'), async (req
   data.settings.tagline = req.body.tagline || '';
   data.settings.currencySymbol = req.body.currencySymbol || data.settings.currencySymbol;
   data.settings.logoText = req.body.logoText || data.settings.logoText;
+  data.settings.callStaffEnabled = !!req.body.callStaffEnabled;
   if (req.file) data.settings.heroImage = `/uploads/${req.file.filename}`;
   else if (req.body.heroImageUrl) data.settings.heroImage = req.body.heroImageUrl;
   await db.save(data);
@@ -435,7 +494,8 @@ app.post('/admin/home', requireAdmin, upload.single('heroImageFile'), async (req
 
 // =========================== ADMIN: IMPORT MENU (CSV) ===========================
 // Expected columns: group,category_en,category_th,category_ru,category_zh,category_ar,
-//                   item_en,item_th,item_ru,item_zh,item_ar,desc_en,desc_th,desc_ru,desc_zh,desc_ar,price,tags
+//                   item_en,item_th,item_ru,item_zh,item_ar,desc_en,desc_th,desc_ru,desc_zh,desc_ar,price,tags,unit
+// (unit is optional: "bottle" or "glass", shown as a small pill next to the price — used by wine list rows)
 
 app.get('/admin/import', requireAdmin, async (req, res) => {
   res.render('admin/import', { active: 'import', result: null, error: null });
@@ -490,7 +550,8 @@ app.post('/admin/import', requireAdmin, upload.single('csvFile'), async (req, re
         tags: (row.tags || '').split(',').map((s) => s.trim()).filter(Boolean),
         imageUrl: '',
         status: 'published',
-        sortOrder: maxOrder + 1
+        sortOrder: maxOrder + 1,
+        unit: ['bottle', 'glass'].includes((row.unit || '').toLowerCase()) ? row.unit.toLowerCase() : null
       });
       createdItems += 1;
     });
