@@ -42,7 +42,7 @@
       <% } else { %>
         <div class="item-grid">
           <% items.forEach(function(it) { %>
-            <div class="item-card<%= group !== 'food' ? ' item-card--dark' : '' %>">
+            <div class="item-card">
               <div class="img">
                 <% if (it.imageUrl) { %><img src="<%= it.imageUrl %>" alt=""><% } else { %>&#127860;<% } %>
               </div>
@@ -54,7 +54,7 @@
                 <% if (t(it.desc)) { %><div class="desc"><%= t(it.desc) %></div><% } %>
                 <div class="item-footer">
                   <% if (it.price) { %>
-                    <div class="price"><% if (group === 'food') { %><%= settings.currencySymbol %><%= it.price %><% } else { %><%= Number(it.price).toLocaleString('en-US') %> THB<% } %></div>
+                    <div class="price"><%= Number(it.price).toLocaleString('en-US') %> THB</div>
                   <% } else { %><div></div><% } %>
                   <% if (it.unit) { %><span class="unit-pill"><%= t(UNIT_LABELS[it.unit]) %></span><% } %>
                 </div>
