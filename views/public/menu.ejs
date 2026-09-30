@@ -42,7 +42,7 @@
       <% } else { %>
         <div class="item-grid">
           <% items.forEach(function(it) { %>
-            <div class="item-card">
+            <div class="item-card<%= group !== 'food' ? ' item-card--dark' : '' %>">
               <div class="img">
                 <% if (it.imageUrl) { %><img src="<%= it.imageUrl %>" alt=""><% } else { %>&#127860;<% } %>
               </div>
@@ -50,9 +50,14 @@
                 <% if (it.tags && it.tags.length) { %>
                   <div class="tags"><% it.tags.forEach(function(tag){ %><span class="tag"><%= tag %></span><% }) %></div>
                 <% } %>
-                <div class="name serif"><%= t(it.name) %><% if (it.unit) { %> <span class="unit-badge">(<%= t(UNIT_LABELS[it.unit]) %>)</span><% } %></div>
+                <div class="name serif"><%= t(it.name) %></div>
                 <% if (t(it.desc)) { %><div class="desc"><%= t(it.desc) %></div><% } %>
-                <% if (it.price) { %><div class="price"><%= settings.currencySymbol %><%= it.price %></div><% } %>
+                <div class="item-footer">
+                  <% if (it.price) { %>
+                    <div class="price"><% if (group === 'food') { %><%= settings.currencySymbol %><%= it.price %><% } else { %><%= Number(it.price).toLocaleString('en-US') %> THB<% } %></div>
+                  <% } else { %><div></div><% } %>
+                  <% if (it.unit) { %><span class="unit-pill"><%= t(UNIT_LABELS[it.unit]) %></span><% } %>
+                </div>
               </div>
             </div>
           <% }) %>
