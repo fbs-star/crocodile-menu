@@ -7,7 +7,6 @@
   --white-soft: rgba(255,255,255,0.75);
   --white-faint: rgba(255,255,255,0.12);
   --white-line: rgba(255,255,255,0.22);
-  --navy-card: #0F2A4A;
 }
 
 * { box-sizing: border-box; }
@@ -134,7 +133,6 @@ a { color: inherit; text-decoration: none; }
 
 .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
 .item-card { background: var(--white-faint); border: 1px solid var(--white-line); border-radius: 10px; overflow: hidden; }
-.item-card--dark { background: var(--navy-card); border-color: rgba(255,255,255,0.15); }
 .item-card .img { width: 100%; height: 150px; background: linear-gradient(135deg, var(--coral), var(--coral-deep)); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--white); }
 .item-card .img img { width: 100%; height: 100%; object-fit: cover; }
 .item-card .body { padding: 14px 16px; }
