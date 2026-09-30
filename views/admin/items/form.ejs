@@ -37,6 +37,14 @@
   <div class="lang-grid">
     <div class="form-row"><label>Price (THB)</label><input type="text" name="price" value="<%= item ? item.price : '' %>" placeholder="e.g. 320"></div>
     <div class="form-row"><label>Tags</label><input type="text" name="tags" value="<%= item && item.tags ? item.tags.join(', ') : '' %>" placeholder="e.g. Spicy, Chef's Special"></div>
+    <div class="form-row">
+      <label>Sold by</label>
+      <select name="unit">
+        <option value="" <%= (!item || !item.unit) ? 'selected' : '' %>>&mdash; None &mdash;</option>
+        <option value="bottle" <%= (item && item.unit === 'bottle') ? 'selected' : '' %>>Bottle</option>
+        <option value="glass" <%= (item && item.unit === 'glass') ? 'selected' : '' %>>Glass</option>
+      </select>
+    </div>
   </div>
 
   <div class="form-row">
