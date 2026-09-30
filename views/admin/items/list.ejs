@@ -23,7 +23,7 @@
     <% items.forEach(function(it) { %>
       <tr>
         <td><% if (it.imageUrl) { %><img class="thumb" src="<%= it.imageUrl %>" alt=""><% } %></td>
-        <td><%= it.name.en %></td>
+        <td><%= it.name.en %><% if (it.unit) { %> <span class="badge" style="background:#eee;color:#555;"><%= it.unit %></span><% } %></td>
         <td><%= it.cat ? it.cat.name.en : '—' %></td>
         <td><%= it.price ? ('฿' + it.price) : '—' %></td>
         <td><span class="badge badge-<%= it.status %>"><%= it.status === 'published' ? 'Published' : 'Hidden' %></span></td>
