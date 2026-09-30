@@ -1,0 +1,30 @@
+<%- include('../_head_open', { active }) %>
+
+<h1>Call Requests</h1>
+<div class="admin-sub"><%= calls.filter(function(c){ return c.status === 'pending'; }).length %> pending</div>
+
+<table class="admin-table">
+  <thead>
+    <tr><th>#</th><th>Requested at</th><th>Status</th><th>Resolved at</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% calls.forEach(function(c) { %>
+      <tr>
+        <td>#<%= c.id %></td>
+        <td><%= c.createdAt ? new Date(c.createdAt).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) : '—' %></td>
+        <td><span class="badge badge-<%= c.status === 'pending' ? 'hidden' : 'published' %>"><%= c.status === 'pending' ? 'Pending' : 'Resolved' %></span></td>
+        <td><%= c.resolvedAt ? new Date(c.resolvedAt).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) : '—' %></td>
+        <td>
+          <% if (c.status === 'pending') { %>
+            <form method="post" action="/admin/calls/<%= c.id %>/resolve" style="display:inline;"><button class="btn-link" type="submit">Mark resolved</button></form>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+    <% if (!calls.length) { %>
+      <tr><td colspan="5" style="text-align:center;color:#8a8f9c;">No call requests yet.</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<%- include('../_foot_close') %>
