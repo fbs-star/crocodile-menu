@@ -55,7 +55,17 @@
                 <% if (it.tags && it.tags.length) { %>
                   <div class="tags"><% it.tags.forEach(function(tag){ %><span class="tag"><%= tag %></span><% }) %></div>
                 <% } %>
-                <div class="name serif"><%= t(it.name) %></div>
+                <div class="name serif">
+                  <span class="name-text"><%= t(it.name) %></span>
+                  <% var itemDiet = dietaryDefs.filter(function(d){ return it[d.field]; }); %>
+                  <% if (itemDiet.length) { %>
+                    <span class="name-dietary">
+                      <% itemDiet.forEach(function(d) { %>
+                        <svg class="dietary-icon" viewBox="<%= d.viewBox %>" aria-hidden="true"><title><%= ui[d.labelKey] %></title><g transform="translate(0,<%= d.h %>) scale(0.1,-0.1)" fill="currentColor"><path d="<%- d.path %>"/></g></svg>
+                      <% }) %>
+                    </span>
+                  <% } %>
+                </div>
                 <% if (t(it.desc)) { %><div class="desc"><%= t(it.desc) %></div><% } %>
                 <div class="item-footer">
                   <% if (it.price) { %>
