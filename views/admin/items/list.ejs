@@ -23,7 +23,17 @@
     <% items.forEach(function(it) { %>
       <tr>
         <td><% if (it.imageUrl) { %><img class="thumb" src="<%= it.imageUrl %>" alt=""><% } %></td>
-        <td><%= it.name.en %><% if (it.unit) { %> <span class="badge" style="background:#eee;color:#555;"><%= it.unit %></span><% } %></td>
+        <td>
+          <%= it.name.en %><% if (it.unit) { %> <span class="badge" style="background:#eee;color:#555;"><%= it.unit %></span><% } %>
+          <% var activeDiet = dietaryDefs.filter(function(d){ return it[d.field]; }); %>
+          <% if (activeDiet.length) { %>
+            <div class="dietary-badges">
+              <% activeDiet.forEach(function(d) { %>
+                <svg class="dietary-icon-inline" viewBox="<%= d.viewBox %>" aria-hidden="true" title="<%= ui[d.labelKey] %>"><g transform="translate(0,<%= d.h %>) scale(0.1,-0.1)" fill="currentColor"><path d="<%- d.path %>"/></g></svg>
+              <% }) %>
+            </div>
+          <% } %>
+        </td>
         <td><%= it.cat ? it.cat.name.en : '—' %></td>
         <td><%= it.price ? (Number(it.price).toLocaleString('en-US') + ' THB') : '—' %></td>
         <td><span class="badge badge-<%= it.status %>"><%= it.status === 'published' ? 'Published' : 'Hidden' %></span></td>

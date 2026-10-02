@@ -47,6 +47,19 @@
     </div>
   </div>
 
+  <div class="section-title">Dietary flags</div>
+  <div class="form-row">
+    <div class="checkbox-grid">
+      <% dietaryDefs.forEach(function(d) { %>
+        <label class="checkbox-label">
+          <input type="checkbox" name="<%= d.column %>" <%= (item && item[d.field]) ? 'checked' : '' %>>
+          <svg class="dietary-icon-inline" viewBox="<%= d.viewBox %>" aria-hidden="true"><g transform="translate(0,<%= d.h %>) scale(0.1,-0.1)" fill="currentColor"><path d="<%- d.path %>"/></g></svg>
+          <%= ui[d.labelKey] %>
+        </label>
+      <% }) %>
+    </div>
+  </div>
+
   <div class="form-row">
     <label>Photo</label>
     <input type="file" name="imageFile" accept="image/*">
