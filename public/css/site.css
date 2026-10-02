@@ -8,6 +8,7 @@
   --white-faint: rgba(255,255,255,0.12);
   --white-line: rgba(255,255,255,0.22);
   --allergy-bar-height: 66px;
+  --gold: #D8BD8C;
 }
 
 * { box-sizing: border-box; }
@@ -163,6 +164,20 @@ a { color: inherit; text-decoration: none; }
 .item-card .price { font-weight: 700; color: var(--white); }
 .unit-pill { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: var(--white); background: transparent; border: 1px solid rgba(255,255,255,0.45); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
 .empty-note { color: rgba(255,255,255,0.7); font-size: 14px; padding: 40px 0; text-align: center; }
+
+/* ---------- Dietary/allergen icon badges ---------- */
+.item-dietary { display: flex; gap: 6px; margin-bottom: 6px; }
+.dietary-icon { width: 15px; height: 15px; color: var(--gold); flex-shrink: 0; }
+.dietary-legend {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--white-line);
+}
+.dietary-legend__title { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; color: rgba(255,255,255,0.65); margin-bottom: 10px; }
+.dietary-legend__items { display: flex; flex-wrap: wrap; gap: 16px; }
+.dietary-legend__item { display: flex; align-items: center; gap: 7px; }
+.dietary-legend__item .dietary-icon { width: 17px; height: 17px; }
+.dietary-legend__label { font-size: 12.5px; color: rgba(255,255,255,0.85); }
 
 /* ---------- Promotions ---------- */
 .promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; padding: 32px 40px calc(32px + var(--allergy-bar-height)); background: var(--coral); }
