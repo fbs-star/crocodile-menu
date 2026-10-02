@@ -1,0 +1,15 @@
+<%
+  var allergyLines = (ui.allergyNotice || '').split('\n');
+%>
+<div class="allergy-notice">
+  <svg class="allergy-notice__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="1.6"/>
+    <rect x="11.1" y="6.8" width="1.8" height="7" rx="0.9" fill="currentColor"/>
+    <circle cx="12" cy="16.6" r="1.1" fill="currentColor"/>
+  </svg>
+  <div class="allergy-notice__text">
+    <% allergyLines.forEach(function (line, i) { %>
+      <div class="allergy-notice__line allergy-notice__line--<%= i + 1 %>"><%= line %></div>
+    <% }) %>
+  </div>
+</div>
