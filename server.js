@@ -8,6 +8,7 @@ const { parse: parseCsv } = require('csv-parse/sync');
 
 const db = require('./lib/db');
 const { LANGS, UI, UNIT_LABELS, t, dirFor, isValidLang } = require('./lib/i18n');
+const { DIETARY_DEFS } = require('./lib/dietary');
 
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'crocodile2026';
@@ -115,7 +116,8 @@ app.get('/menu/:group', async (req, res) => {
     group,
     cats,
     selectedCat,
-    items
+    items,
+    dietaryDefs: DIETARY_DEFS
   });
 });
 
@@ -286,13 +288,14 @@ app.get('/admin/items', requireAdmin, async (req, res) => {
     items,
     categories: data.categories,
     catFilter,
-    active: 'items'
+    active: 'items',
+    dietaryDefs: DIETARY_DEFS
   });
 });
 
 app.get('/admin/items/new', requireAdmin, async (req, res) => {
   const data = await db.load();
-  res.render('admin/items/form', { item: null, categories: data.categories, active: 'items' });
+  res.render('admin/items/form', { item: null, categories: data.categories, active: 'items', dietaryDefs: DIETARY_DEFS });
 });
 
 function readItemBody(req) {
@@ -318,7 +321,12 @@ function readItemBody(req) {
       .map((s) => s.trim())
       .filter(Boolean),
     unit: ['bottle', 'glass'].includes(req.body.unit) ? req.body.unit : null,
-    status: req.body.status === 'published' ? 'published' : 'hidden'
+    status: req.body.status === 'published' ? 'published' : 'hidden',
+    isSpicy: !!req.body.is_spicy,
+    isGlutenFree: !!req.body.is_gluten_free,
+    isVegan: !!req.body.is_vegan,
+    containsPork: !!req.body.contains_pork,
+    containsShellfish: !!req.body.contains_shellfish
   };
 }
 
@@ -337,7 +345,7 @@ app.get('/admin/items/:id/edit', requireAdmin, async (req, res) => {
   const data = await db.load();
   const item = data.items.find((i) => i.id === Number(req.params.id));
   if (!item) return res.redirect('/admin/items');
-  res.render('admin/items/form', { item, categories: data.categories, active: 'items' });
+  res.render('admin/items/form', { item, categories: data.categories, active: 'items', dietaryDefs: DIETARY_DEFS });
 });
 
 app.post('/admin/items/:id/edit', requireAdmin, upload.single('imageFile'), async (req, res) => {
