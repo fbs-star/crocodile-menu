@@ -7,6 +7,7 @@
   --white-soft: rgba(255,255,255,0.75);
   --white-faint: rgba(255,255,255,0.12);
   --white-line: rgba(255,255,255,0.22);
+  --allergy-bar-height: 66px;
 }
 
 * { box-sizing: border-box; }
@@ -23,7 +24,7 @@ a { color: inherit; text-decoration: none; }
 /* ---------- Hero / Home ---------- */
 .hero {
   width: 100%;
-  min-height: 100vh;
+  min-height: calc(100vh - var(--allergy-bar-height));
   background-size: cover;
   background-position: center;
   background-color: var(--coral);
@@ -130,7 +131,7 @@ a { color: inherit; text-decoration: none; }
 .call-staff-btn:disabled { cursor: default; opacity: 0.85; }
 .call-staff-btn.sent { background: var(--white); color: var(--coral-deep); border-color: var(--white); }
 
-.menu-body { display: flex; min-height: calc(100vh - 78px); background: var(--coral); }
+.menu-body { display: flex; min-height: calc(100vh - 78px - var(--allergy-bar-height)); background: var(--coral); }
 .menu-sidebar {
   width: 260px; background: var(--coral); border-right: 1px solid rgba(255,255,255,0.18);
   padding: 18px 0; flex-shrink: 0;
@@ -164,7 +165,7 @@ a { color: inherit; text-decoration: none; }
 .empty-note { color: rgba(255,255,255,0.7); font-size: 14px; padding: 40px 0; text-align: center; }
 
 /* ---------- Promotions ---------- */
-.promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; padding: 32px 40px; background: var(--coral); }
+.promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; padding: 32px 40px calc(32px + var(--allergy-bar-height)); background: var(--coral); }
 .promo-card { background: var(--white-faint); border-radius: 12px; overflow: hidden; border: 1px solid var(--white-line); }
 .promo-card .img { width: 100%; height: 170px; background: linear-gradient(135deg, var(--coral), var(--coral-deep)); }
 .promo-card .img img { width: 100%; height: 100%; object-fit: cover; }
@@ -173,13 +174,50 @@ a { color: inherit; text-decoration: none; }
 .promo-card .sub { font-size: 14px; color: rgba(255,255,255,0.75); margin-bottom: 10px; }
 .promo-card .price { color: var(--white); font-weight: 700; }
 
+/* ---------- Allergy / dietary-requirements notice bar ---------- */
+.allergy-notice {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  min-height: var(--allergy-bar-height);
+  background: linear-gradient(180deg, var(--coral) 0%, var(--coral-deep) 100%);
+  box-shadow: 0 -6px 18px rgba(20,11,7,0.35);
+  border-top: 1px solid rgba(255,255,255,0.22);
+}
+.allergy-notice__icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--white);
+}
+.allergy-notice__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.35;
+}
+.allergy-notice__line--1 { font-size: 13.5px; font-weight: 700; color: var(--white); }
+.allergy-notice__line--2 { font-size: 12.5px; font-weight: 500; color: var(--white-soft); }
+
 @media (max-width: 720px) {
   .menu-body { flex-direction: column; }
   .menu-sidebar { width: 100%; display: flex; overflow-x: auto; padding: 10px; }
   .menu-sidebar a { flex-shrink: 0; border-left: none; border-bottom: 3px solid transparent; }
   .menu-sidebar a.active { border-bottom-color: var(--white); }
   .menu-content { padding: 24px 18px; }
-  .promo-grid { padding: 24px 18px; }
+  .promo-grid { padding: 24px 18px calc(24px + var(--allergy-bar-height)); }
   .header-actions { flex-wrap: wrap; justify-content: flex-end; }
   .call-staff-btn { font-size: 11px; padding: 8px 12px; }
+  :root { --allergy-bar-height: 72px; }
+  .allergy-notice { padding: 10px 16px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); gap: 10px; }
+  .allergy-notice__icon { width: 19px; height: 19px; }
+  .allergy-notice__line--1 { font-size: 12px; }
+  .allergy-notice__line--2 { font-size: 11px; }
 }
