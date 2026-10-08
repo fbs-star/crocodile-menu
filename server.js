@@ -18,16 +18,32 @@ const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-    filename: (req, file, cb) => {
+// Uploaded images are stored in the Turso database (table `uploads`) instead of
+// on disk: Render's free-plan disk is wiped on every restart/redeploy, which
+// used to make uploaded photos and the logo disappear.
+const dbStorage = {
+  _handleFile(req, file, cb) {
+    const chunks = [];
+    file.stream.on('data', (c) => chunks.push(c));
+    file.stream.on('error', cb);
+    file.stream.on('end', async () => {
+      const buffer = Buffer.concat(chunks);
       const ext = path.extname(file.originalname || '').slice(0, 10);
-      cb(null, `img_${Date.now()}_${Math.round(Math.random() * 1e6)}${ext}`);
-    }
-  }),
-  limits: { fileSize: 8 * 1024 * 1024 }
-});
+      const filename = `img_${Date.now()}_${Math.round(Math.random() * 1e6)}${ext}`;
+      try {
+        if (/^image\//.test(file.mimetype || '')) await db.saveUpload(filename, file.mimetype, buffer);
+        cb(null, { filename, buffer, size: buffer.length });
+      } catch (e) {
+        cb(e);
+      }
+    });
+  },
+  _removeFile(req, file, cb) {
+    cb(null);
+  }
+};
+
+const upload = multer({ storage: dbStorage, limits: { fileSize: 8 * 1024 * 1024 } });
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -35,6 +51,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.get('/uploads/:name', async (req, res, next) => {
+  try {
+    const u = await db.getUpload(req.params.name);
+    if (!u) return next();
+    res.set('Content-Type', u.mime);
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(u.data);
+  } catch (e) {
+    next();
+  }
+});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   session({
@@ -530,7 +557,7 @@ app.post('/admin/import', requireAdmin, upload.single('csvFile'), async (req, re
     return res.render('admin/import', { active: 'import', result: null, error: 'Please choose a CSV file.' });
   }
   try {
-    const content = fs.readFileSync(req.file.path, 'utf8');
+    const content = req.file.buffer.toString('utf8');
     const rows = parseCsv(content, { columns: true, skip_empty_lines: true, trim: true });
     const data = await db.load();
     let createdCats = 0;
@@ -581,7 +608,6 @@ app.post('/admin/import', requireAdmin, upload.single('csvFile'), async (req, re
     });
 
     await db.save(data);
-    fs.unlink(req.file.path, () => {});
     res.render('admin/import', {
       active: 'import',
       result: { rows: rows.length, createdCats, createdItems },
