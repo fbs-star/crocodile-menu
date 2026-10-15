@@ -19,7 +19,7 @@
       <% } %>
       <div class="lang-switch">
         <% LANGS.forEach(function(l) { %>
-          <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= l.code %><%= selectedCat ? ('&cat=' + selectedCat.id) : '' %>"><%= l.label %></a>
+          <a class="lang-pill <%= l.code === lang ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= l.code %><%= selectedCat ? ('&cat=' + selectedCat.id) : '' %><%= mealQuery %>"><%= l.label %></a>
         <% }) %>
       </div>
     </div>
@@ -31,12 +31,15 @@
         <div class="empty-note" style="padding:20px;">No categories published yet.</div>
       <% } %>
       <% cats.forEach(function(c) { %>
-        <a class="<%= selectedCat && selectedCat.id === c.id ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= lang %>&cat=<%= c.id %>">
+        <a class="<%= selectedCat && selectedCat.id === c.id ? 'active' : '' %>" href="/menu/<%= group %>?lang=<%= lang %>&cat=<%= c.id %><%= mealQuery %>">
           <%= t(c.name) %>
         </a>
       <% }) %>
     </div>
     <div class="menu-content">
+      <% if (showMeal) { %>
+        <div class="meal-badge meal-<%= meal %>"><%= meal === 'dinner' ? ui.mealDinner : ui.mealLunch %></div>
+      <% } %>
       <% if (selectedCat) { %>
         <h1 class="serif"><%= t(selectedCat.name) %></h1>
         <div class="divider"><div></div><div></div></div>
