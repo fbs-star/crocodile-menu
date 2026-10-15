@@ -129,14 +129,39 @@ app.get('/', async (req, res) => {
   res.render('public/home', { settings: data.settings });
 });
 
+// Lunch / Dinner switching (2026-10-14): the Food menu changes automatically at
+// 17:00 Bangkok time. Items carry meal = 'both' | 'lunch' | 'dinner'.
+// ?meal=lunch|dinner overrides the clock (used for previews/testing).
+const DINNER_START_HOUR = 17;
+function currentMeal(req) {
+  const o = String((req.query && req.query.meal) || '').toLowerCase();
+  if (o === 'lunch' || o === 'dinner') return { meal: o, forced: true };
+  const hour = Number(
+    new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', hour12: false }).format(new Date())
+  ) % 24;
+  return { meal: hour >= DINNER_START_HOUR ? 'dinner' : 'lunch', forced: false };
+}
+function inMeal(item, meal) {
+  return !item.meal || item.meal === 'both' || item.meal === meal;
+}
+
 app.get('/menu/:group', async (req, res) => {
   const group = ['drinks', 'wine'].includes(req.params.group) ? req.params.group : 'food';
   const data = await db.load();
-  const cats = sortedCats(data.categories, group).filter((c) => c.status === 'published');
+  const { meal, forced } = currentMeal(req);
+  const pubItems = data.items.filter((i) => i.status === 'published');
+  // A category is hidden for a period when it has published items but none of
+  // them belong to that period (e.g. "The Mexican" at dinner, "Churrasco" at lunch).
+  const cats = sortedCats(data.categories, group)
+    .filter((c) => c.status === 'published')
+    .filter((c) => {
+      const own = pubItems.filter((i) => i.categoryId === c.id);
+      return !own.length || own.some((i) => inMeal(i, meal));
+    });
   const selectedId = req.query.cat ? Number(req.query.cat) : cats.length ? cats[0].id : null;
-  const selectedCat = cats.find((c) => c.id === selectedId) || null;
+  const selectedCat = cats.find((c) => c.id === selectedId) || cats[0] || null;
   const items = selectedCat
-    ? itemsFor(data.items, selectedCat.id).filter((i) => i.status === 'published')
+    ? itemsFor(data.items, selectedCat.id).filter((i) => i.status === 'published' && inMeal(i, meal))
     : [];
   res.render('public/menu', {
     settings: data.settings,
@@ -144,7 +169,10 @@ app.get('/menu/:group', async (req, res) => {
     cats,
     selectedCat,
     items,
-    dietaryDefs: DIETARY_DEFS
+    dietaryDefs: DIETARY_DEFS,
+    meal,
+    showMeal: group === 'food',
+    mealQuery: forced ? '&meal=' + meal : ''
   });
 });
 
@@ -348,6 +376,7 @@ function readItemBody(req) {
       .map((s) => s.trim())
       .filter(Boolean),
     unit: ['bottle', 'glass'].includes(req.body.unit) ? req.body.unit : null,
+    meal: ['lunch', 'dinner'].includes(req.body.meal) ? req.body.meal : 'both',
     status: req.body.status === 'published' ? 'published' : 'hidden',
     isSpicy: !!req.body.is_spicy,
     isGlutenFree: !!req.body.is_gluten_free,
@@ -547,6 +576,7 @@ app.post(
 // Expected columns: group,category_en,category_th,category_ru,category_zh,category_ar,
 //                   item_en,item_th,item_ru,item_zh,item_ar,desc_en,desc_th,desc_ru,desc_zh,desc_ar,price,tags,unit
 // (unit is optional: "bottle" or "glass", shown as a small pill next to the price — used by wine list rows)
+// (meal is optional: "lunch", "dinner" or blank/"both" -- which service period shows the item)
 
 app.get('/admin/import', requireAdmin, async (req, res) => {
   res.render('admin/import', { active: 'import', result: null, error: null });
@@ -602,7 +632,8 @@ app.post('/admin/import', requireAdmin, upload.single('csvFile'), async (req, re
         imageUrl: '',
         status: 'published',
         sortOrder: maxOrder + 1,
-        unit: ['bottle', 'glass'].includes((row.unit || '').toLowerCase()) ? row.unit.toLowerCase() : null
+        unit: ['bottle', 'glass'].includes((row.unit || '').toLowerCase()) ? row.unit.toLowerCase() : null,
+        meal: ['lunch', 'dinner'].includes((row.meal || '').toLowerCase()) ? row.meal.toLowerCase() : 'both'
       });
       createdItems += 1;
     });
