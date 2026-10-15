@@ -236,3 +236,6 @@ a { color: inherit; text-decoration: none; }
   .allergy-notice__line--1 { font-size: 12px; }
   .allergy-notice__line--2 { font-size: 11px; }
 }
+
+/* Lunch / Dinner period badge (2026-10-14) */
+.meal-badge{display:inline-block;margin:0 0 10px;padding:4px 14px;border:1px solid var(--gold);border-radius:999px;color:var(--gold);font-size:12px;letter-spacing:.12em;text-transform:uppercase;}
