@@ -25,6 +25,7 @@
         <td><% if (it.imageUrl) { %><img class="thumb" src="<%= it.imageUrl %>" alt=""><% } %></td>
         <td>
           <%= it.name.en %><% if (it.unit) { %> <span class="badge" style="background:#eee;color:#555;"><%= it.unit %></span><% } %>
+          <% if (it.meal === 'lunch' || it.meal === 'dinner') { %> <span class="badge" style="background:<%= it.meal === 'dinner' ? '#2b2f4a' : '#f3e2b3' %>;color:<%= it.meal === 'dinner' ? '#fff' : '#5a4300' %>;"><%= it.meal === 'dinner' ? 'Dinner only' : 'Lunch only' %></span><% } %>
           <% var activeDiet = dietaryDefs.filter(function(d){ return it[d.field]; }); %>
           <% if (activeDiet.length) { %>
             <div class="dietary-badges">

@@ -45,6 +45,14 @@
         <option value="glass" <%= (item && item.unit === 'glass') ? 'selected' : '' %>>Glass</option>
       </select>
     </div>
+    <div class="form-row">
+      <label>Served at</label>
+      <select name="meal">
+        <option value="both" <%= (!item || !item.meal || item.meal === 'both') ? 'selected' : '' %>>Lunch &amp; Dinner</option>
+        <option value="lunch" <%= (item && item.meal === 'lunch') ? 'selected' : '' %>>Lunch only (until 17:00)</option>
+        <option value="dinner" <%= (item && item.meal === 'dinner') ? 'selected' : '' %>>Dinner only (from 17:00)</option>
+      </select>
+    </div>
   </div>
 
   <div class="section-title">Dietary flags</div>
