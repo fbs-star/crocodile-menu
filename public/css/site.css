@@ -151,9 +151,13 @@ a { color: inherit; text-decoration: none; }
 .menu-content .divider div:last-child { width: 56px; }
 
 .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
-.item-card { background: var(--white-faint); border: 1px solid var(--white-line); border-radius: 10px; overflow: hidden; }
-.item-card .img { width: 100%; height: 150px; background: linear-gradient(135deg, var(--coral), var(--coral-deep)); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--white); }
-.item-card .img img { width: 100%; height: 100%; object-fit: cover; }
+.item-card { background: var(--white-faint); border: 1px solid var(--white-line); border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(70,25,15,0.22); transition: transform .2s ease, box-shadow .2s ease; }
+.item-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(70,25,15,0.30); }
+/* Photo frame: square cream "plate" panel; photos are shown whole (contain) and their white
+   backdrop blends into the panel via multiply, so every dish/drink looks evenly framed. */
+.item-card .img { position: relative; width: 100%; aspect-ratio: 1 / 1; padding: 8px; background: linear-gradient(135deg, var(--coral), var(--coral-deep)); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--white); border-bottom: 1px solid rgba(216,189,140,0.55); }
+.item-card .img.has-img { background: radial-gradient(circle at 50% 45%, #fffdfa 0%, #f8efe4 58%, #eddcc7 100%); }
+.item-card .img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; display: block; }
 .item-card .body { padding: 14px 16px; }
 .item-card .tags { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
 .tag { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; background: rgba(255,255,255,0.9); color: var(--coral-deep); padding: 3px 8px; border-radius: 999px; font-weight: 700; }
