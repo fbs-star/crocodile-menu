@@ -51,8 +51,8 @@
         <div class="item-grid">
           <% items.forEach(function(it) { %>
             <div class="item-card">
-              <div class="img">
-                <% if (it.imageUrl) { %><img src="<%= it.imageUrl %>" alt=""><% } else { %>&#127860;<% } %>
+              <div class="img<%= it.imageUrl ? ' has-img' : '' %>">
+                <% if (it.imageUrl) { %><img src="<%= it.imageUrl %>" alt="" loading="lazy"><% } else { %>&#127860;<% } %>
               </div>
               <div class="body">
                 <% if (it.tags && it.tags.length) { %>
